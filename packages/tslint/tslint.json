@@ -1,0 +1,77 @@
+{
+    "extends": [
+        "tslint:recommended",
+        "tslint-eslint-rules"
+    ],
+    "rules": {
+        "semicolon": [
+            true,
+            "never"
+        ],
+        "indent": [
+            true,
+            "tabs",
+            4
+        ],
+        "quotemark": [
+            true,
+            "double",
+            "jsx-double"
+        ],
+        "no-object-literal-type-assertion": false,
+        "no-implicit-dependencies": false,
+        "max-line-length": false,
+        "no-duplicate-imports": false,
+        "object-literal-sort-keys": false,
+        "curly": [
+            true,
+            "ignore-same-line"
+        ],
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-leading-underscore",
+            "allow-snake-case",
+            "allow-pascal-case"
+        ],
+        "no-submodule-imports": false,
+        "object-literal-shorthand": false,
+        "object-curly-spacing": [
+            true,
+            "always"
+        ],
+        "interface-name": false,
+        "object-literal-key-quotes": false,
+        "no-return-await": false,
+        "array-type": [
+            true,
+            "array"
+        ],
+        "max-classes-per-file": false,
+        "no-unused-expression": false,
+        "radix": false,
+        "no-empty-interface": false,
+        "trailing-comma": [
+            true,
+            {
+                "multiline": "never",
+                "singleline": "never"
+            }
+        ],
+        "member-access": [
+            true,
+            "no-public"
+        ],
+        "no-console": [
+            true,
+            "log"
+        ],
+        "no-empty": false,
+        "no-var-requires": false,
+        "no-namespace": [
+            true,
+            "allow-declarations"
+        ]
+    }
+}

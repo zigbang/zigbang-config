@@ -1,0 +1,10 @@
+{
+  "name": "@zigbang/config-tsconfig",
+  "version": "1.0.0",
+  "description": "common tsconfig for Zigbang typescript projects",
+  "author": "이제오 <xeoh@zigbang.com>",
+  "license": "MIT",
+  "devDependencies": {
+	"typescript": "^3.2.2"
+  }
+}

@@ -4,7 +4,10 @@
     "description": "common tslint config for Zigbang typescript projects",
     "author": "이제오 <xeoh@zigbang.com>",
     "license": "MIT",
-    "main": "lib/tslint.js",
+    "files": [
+		"test/",
+		"tslint.json"
+	],
     "scripts": {
         "test": "mocha -r ts-node/register test/zigbang-config-tslint.spec.ts"
     },

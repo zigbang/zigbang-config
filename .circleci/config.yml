@@ -121,7 +121,9 @@ commands:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
       - run: lerna bootstrap
-      - run: ts-node packages/ts-reporter/scripts/test-tslint.ts << parameters.repo_url >> << parameters.repo_name >> << parameters.target_branch >>
+      - run:
+          command: ts-node packages/ts-reporter/scripts/test-tslint.ts << parameters.repo_url >> << parameters.repo_name >> << parameters.target_branch >>
+          no_output_timeout: 20m
       - store_artifacts:
           path: ./.results
       - persist_to_workspace:

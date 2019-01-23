@@ -110,7 +110,7 @@ function tslint(path: string, name: string) {
 	shell.cd(path)
 	shell.echo(chalk.green(`linting: ${shell.pwd()}`))
 	child.execSync(
-		`npx tslint --project . --config ${originPath}/packages/tslint/tslint.json -o ${originPath}/.results/${name}.json -t json --force`,
+		`npx tslint --project . --config ${originPath}/packages/tslint/tslint.json -o ${originPath}/.results/${name}.json -t json --force --fix`,
 		{ encoding: "utf8", stdio: "inherit" }
 	)
 

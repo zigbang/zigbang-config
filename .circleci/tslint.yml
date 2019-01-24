@@ -1,0 +1,29 @@
+commands:
+  test-tslint:
+    description: Test tslint for given repo
+    parameters:
+      path:
+        type: string
+      repo_url:
+        type: string
+      repo_name:
+        type: string
+      target_branch:
+        type: string
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "02:b5:b3:06:7f:af:06:8a:37:c1:22:85:fa:22:10:2d"
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run: lerna bootstrap
+      - run:
+          command: ts-node << parameters.path >>/scripts/test-tslint.ts << parameters.repo_url >> << parameters.repo_name >> << parameters.target_branch >>
+          no_output_timeout: 20m
+      - store_artifacts:
+          path: ./.results
+      - persist_to_workspace:
+          root: .results
+          paths:
+            - << parameters.repo_name >>.json

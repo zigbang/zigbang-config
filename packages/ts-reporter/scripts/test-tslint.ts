@@ -1,7 +1,7 @@
 import chalk from "chalk"
-import * as shell from "shelljs"
 import * as child from "child_process"
 import * as fs from "fs"
+import * as shell from "shelljs"
 
 function testTslint() {
 	shell.rm("-rf", ".results")
@@ -9,12 +9,12 @@ function testTslint() {
 
 	const { repoUrl, repoName, targetBranch } = readParams()
 	downloadRepo(repoUrl, repoName, targetBranch)
-	
+
 	const isLernaRepo = hasDependency(`./.archive/${repoName}`, "lerna")
 
 	installPackages(repoName, isLernaRepo)
 	const targetDirs = getTargetDirectories(repoName, isLernaRepo)
-	
+
 	for (const targetDir of targetDirs) {
 		tslint(targetDir.path, targetDir.name)
 	}
@@ -53,16 +53,19 @@ function downloadRepo(repoUrl: string, repoName: string, targetBranch: string) {
 function hasDependency(path: string, dependency: string) {
 	const originPath = shell.pwd()
 	shell.cd(path)
-	
+
 	if (!fs.existsSync("./package.json")) {
 		shell.echo(chalk.red(`${path} is not node based repository`))
 		return false
 	}
 
-	const packageJson = JSON.parse(shell.cat(`./package.json`))
+	const packageJson = JSON.parse(shell.cat(`./package.json`)) as {
+		devDependencies?: { [key: string]: string}
+		dependencies?: { [key: string]: string}
+	}
 	const inDevDependencies = packageJson.devDependencies && packageJson.devDependencies[dependency]
 	const inDependencies = packageJson.dependencies && packageJson.dependencies[dependency]
-	
+
 	shell.cd(originPath)
 	return !!(inDevDependencies || inDependencies)
 }
@@ -107,10 +110,17 @@ function tslint(path: string, name: string) {
 		return
 	}
 
+	if (!fs.existsSync(path + "/tsconfig.json")) {
+		shell.echo(chalk.red(`${name} does not have tsconfig.json`))
+		shell.touch(`${originPath}/.results/${name}.json`)
+		return
+	}
+
 	shell.cd(path)
 	shell.echo(chalk.green(`linting: ${shell.pwd()}`))
+
 	child.execSync(
-		`npx tslint --project . --config ${originPath}/packages/tslint/tslint.json -o ${originPath}/.results/${name}.json -t json --force --fix`,
+		`npx tslint --project . --config ${originPath}/packages/tslint/tslint.json -t json -o ${originPath}/.results/${name}.json --force`,
 		{ encoding: "utf8", stdio: "inherit" }
 	)
 
@@ -133,16 +143,18 @@ function resultSummary(repoName: string) {
 			continue
 		}
 
-		const result: { ruleName: string }[] = JSON.parse(shell.cat(`./.results/${file}`))
-		
-		const total = result.length
+		const result = JSON.parse(shell.cat(`./.results/${file}`)) as { ruleName: string, fix?: {} }[]
+
+		let total = 0
 		const errorMap: { [rulename: string]: number } = {}
 		for (const error of result) {
-			if (!errorMap[error.ruleName]) {
-				errorMap[error.ruleName] = 0
+			if (!error.fix) {
+				if (!errorMap[error.ruleName]) {
+					errorMap[error.ruleName] = 0
+				}
+				errorMap[error.ruleName] = errorMap[error.ruleName] + 1
+				total += 1
 			}
-
-			errorMap[error.ruleName] = errorMap[error.ruleName] + 1
 		}
 
 		summaries.push({

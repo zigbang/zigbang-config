@@ -1,0 +1,1 @@
+const invalidFunctionConstructor = new Function()

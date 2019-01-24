@@ -1,0 +1,110 @@
+version: 2.1
+jobs:
+  zigbang-tslint:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - test-tslint:
+          path: packages/ts-reporter
+          repo_url: git@bitbucket.org:zigbang/zigbang.git
+          repo_name: zigbang
+          target_branch: release
+  zigbang-api-tslint:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - test-tslint:
+          path: packages/ts-reporter
+          repo_url: git@bitbucket.org:zigbang/zigbang-api.git
+          repo_name: zigbang-api
+          target_branch: master
+  zigbang-apis-v2-tslint:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - test-tslint:
+          path: packages/ts-reporter
+          repo_url: git@bitbucket.org:zigbang/zigbang-apis-v2.git
+          repo_name: zigbang-apis-v2
+          target_branch: master
+  zigbang-io-tslint:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - test-tslint:
+          path: packages/ts-reporter
+          repo_url: git@bitbucket.org:zigbang/zigbang-io.git
+          repo_name: zigbang-io
+          target_branch: master
+  react-zuix-tslint:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - test-tslint:
+          path: packages/ts-reporter
+          repo_url: git@bitbucket.org:zigbang/react-zuix.git
+          repo_name: react-zuix
+          target_branch: master
+  zigbang-utils-tslint:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - test-tslint:
+          path: packages/ts-reporter
+          repo_url: git@bitbucket.org:zigbang/zigbang-utils.git
+          repo_name: zigbang-utils
+          target_branch: master
+  merge-summaries:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .results
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run: lerna bootstrap
+      - run: ts-node packages/ts-reporter/scripts/merge-summaries.ts
+      - store_artifacts:
+          path: ./.results/result.json
+
+
+workflows:
+  version: 2.1
+  nightly:
+    jobs:
+      - zigbang-tslint
+      - zigbang-api-tslint
+      - zigbang-apis-v2-tslint
+      - zigbang-io-tslint
+      - react-zuix-tslint
+      - zigbang-utils-tslint
+      - merge-summaries:
+          requires:
+            - zigbang-tslint
+            - zigbang-api-tslint
+            - zigbang-apis-v2-tslint
+            - zigbang-io-tslint
+            - react-zuix-tslint
+            - zigbang-utils-tslint
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - /master/

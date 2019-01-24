@@ -7,6 +7,8 @@ $ yarn add --dev @zigbang/config-tslint
 Add the TSLint config file tslint.json:
 ```json
 {
-	"extends": "@zigbang/config-tslint"
+    "extends": [
+        "@zigbang/config-tslint/tslint.json"
+	]
 }
 ```

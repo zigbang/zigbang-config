@@ -1,9 +1,9 @@
+import { expect } from "chai"
 import * as fs from "fs"
+import * as glob from "glob"
 import * as path from "path"
 
-import { expect } from "chai"
 import { execSync } from "child_process"
-import * as glob from "glob"
 
 const baseDir = "./test/scripts/"
 
@@ -15,7 +15,7 @@ function getDirectories(srcpath: string) {
 
 function tslint(targetFile: string) {
 	try {
-		execSync(`node ./node_modules/.bin/tslint ${targetFile}`)
+		execSync(`node ./node_modules/.bin/tslint --project . ${targetFile}`)
   	} catch (e) {
 		throw new Error(`Message: ${e.toString()}, stdout: ${e.stdout && e.stdout.toString()}, stderr: ${e.stderr && e.stderr.toString()}`)
   	}

@@ -1,4 +1,5 @@
 ## 1. Install
+Intall four devDependencies
 ```
 $ yarn add --dev @zigbang/config-tslint
 ```
@@ -9,6 +10,6 @@ Add the TSLint config file tslint.json:
 {
     "extends": [
         "@zigbang/config-tslint/tslint.json"
-	]
+    ]
 }
 ```

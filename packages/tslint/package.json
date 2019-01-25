@@ -1,21 +1,18 @@
 {
     "name": "@zigbang/config-tslint",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "common tslint config for Zigbang typescript projects",
     "author": "이제오 <xeoh@zigbang.com>",
     "license": "MIT",
     "files": [
-		"test/",
-		"tslint.json"
-	],
+        "test/",
+        "tslint.json"
+    ],
     "scripts": {
         "test": "mocha -r ts-node/register test/zigbang-config-tslint.spec.ts"
     },
-    "peerDependencies": {
-        "tslint": "^5.12.1",
-        "tslint-eslint-rules": "^5.4.0"
-    },
     "devDependencies": {
+		"@zigbang/config-tsconfig": "^1.0.0",
         "@types/chai": "^4.1.7",
         "@types/glob": "^7.1.1",
         "@types/mocha": "^5.2.5",
@@ -25,11 +22,13 @@
         "mocha": "^5.2.0",
         "mocha-env-reporter": "^3.0.0",
         "ts-node": "^7.0.1",
-        "tslint": "^5.12.1",
-        "tslint-eslint-rules": "^5.4.0",
         "typescript": "^3.2.2"
     },
     "dependencies": {
-        "@zigbang/config-tsconfig": "^1.0.0"
+		"@zigbang/config-prettier": "^1.0.0",
+		"prettier": "^1.16.1",
+		"tslint": "^5.12.1",
+		"tslint-eslint-rules": "^5.4.0",
+		"tslint-plugin-prettier": "^2.0.1"
     }
 }

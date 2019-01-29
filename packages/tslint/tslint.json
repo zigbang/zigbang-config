@@ -5,12 +5,6 @@
 		"tslint-plugin-prettier"
 	],
     "rules": {
-        "object-curly-spacing": [
-            true,
-            "always"
-        ],
-		// 여기서 부터 새로 작성하는 tslint 입니다
-		// TypeScript-specific
 		"unified-signatures": true,
 		"adjacent-overload-signatures": true,
 		"ban-ts-ignore": true,
@@ -243,6 +237,12 @@
             "allow-pascal-case"
         ],
 		"whitespace": true,
+		// tslint-eslint-rules
+		"object-curly-spacing": [
+            true,
+            "always"
+		],
+		// tslint-plugin-prettier
 		"prettier": [true, "./node_modules/@zigbang/config-prettier/prettier.js"]
     }
 }

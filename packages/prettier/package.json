@@ -1,9 +1,17 @@
 {
 	"name": "@zigbang/config-prettier",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "common prettier config for Zigbang typescript projects",
 	"author": "이제오 <xeoh@zigbang.com>",
 	"license": "MIT",
+	"homepage": "https://github.com/zigbang/zigbang-config",
+	"repository": {
+		"type" : "git",
+		"url" : "https://github.com/zigbang/zigbang-config"
+	},
+	"files": [
+        "prettier.js"
+    ],
 	"dependencies": {
 		"prettier": "1.16.1"
 	}

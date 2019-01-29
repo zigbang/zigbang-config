@@ -1,9 +1,14 @@
 {
   "name": "@zigbang/config-ts-reporter",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "common tslint config for Zigbang typescript projects",
   "author": "이제오 <xeoh@zigbang.com>",
   "license": "MIT",
+  "homepage": "https://github.com/zigbang/zigbang-config",
+  "repository": {
+	"type" : "git",
+	"url" : "https://github.com/zigbang/zigbang-config"
+  },
   "scripts": {
     "tslint": "tslint --project ."
   },

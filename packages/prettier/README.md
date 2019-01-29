@@ -1,9 +1,9 @@
-## 1. Install
+# @zigbang/config-prettier
+
 ```
-$ yarn add --dev @zigbang/config-prettier
+$ yarn add @zigbang/config
 ```
 
-## 2. Usage
 Add the prettier config file `prettier.config.js`:
 ```js
 module.exports = {

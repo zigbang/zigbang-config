@@ -1,8 +1,7 @@
 {
     "extends": [
         "tslint",
-		"tslint-eslint-rules",
-		"tslint-plugin-prettier"
+		"tslint-eslint-rules"
 	],
     "rules": {
 		"unified-signatures": true,
@@ -241,8 +240,6 @@
 		"object-curly-spacing": [
             true,
             "always"
-		],
-		// tslint-plugin-prettier
-		"prettier": [true, "./node_modules/@zigbang/config-prettier/prettier.js"]
+		]
     }
 }

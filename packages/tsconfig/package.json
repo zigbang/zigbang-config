@@ -1,6 +1,6 @@
 {
     "name": "@zigbang/config-tsconfig",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "description": "common tsconfig for Zigbang typescript projects",
     "author": "이제오 <xeoh@zigbang.com>",
     "license": "MIT",
@@ -10,11 +10,11 @@
         "url": "https://github.com/zigbang/zigbang-config"
     },
     "files": [
-		"base.json",
-		"browser.json",
-		"next.json",
-		"node.json",
-		"react-native.json"
+        "base.json",
+        "browser.json",
+        "next.json",
+        "node.json",
+        "react-native.json"
     ],
     "devDependencies": {
         "typescript": "^3.2.2"

@@ -1,22 +1,22 @@
 {
   "name": "@zigbang/config-ts-reporter",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "common tslint config for Zigbang typescript projects",
   "author": "이제오 <xeoh@zigbang.com>",
   "license": "MIT",
   "homepage": "https://github.com/zigbang/zigbang-config",
   "repository": {
-	"type" : "git",
-	"url" : "https://github.com/zigbang/zigbang-config"
+    "type": "git",
+    "url": "https://github.com/zigbang/zigbang-config"
   },
   "scripts": {
     "tslint": "tslint --project ."
   },
   "dependencies": {
-    "@zigbang/config-tsconfig": "^1.0.0",
-    "@zigbang/config-tslint": "^1.0.0",
-	"chalk": "^2.4.2",
-	"shelljs": "^0.8.3"
+    "@zigbang/config-tsconfig": "^1.1.2",
+    "@zigbang/config-tslint": "^1.1.2",
+    "chalk": "^2.4.2",
+    "shelljs": "^0.8.3"
   },
   "devDependencies": {
     "@types/node": "^10.12.18",

@@ -11,10 +11,3 @@ module.exports = {
   // customized options
 };
 ```
-
-Add script to your `package.json`:
-```json
-scripts: {
-	"prettier": "prettier --write <your_source_path>/**/*.ts"
-}
-```

@@ -52,7 +52,7 @@ Add a following script in your `package.json`:
 ```json
 {
     "scripts": {
-        "lint": "prettier --write ./{your_source_directory}/*.{ts,tsx} --config ./prettier.config.js && tslint --project ."
+        "lint": "prettier --write ./{your_source_directory}/*.{ts,tsx} --config ./prettier.config.js && tslint --project . --fix"
     }
 }
 ```

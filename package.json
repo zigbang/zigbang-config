@@ -9,7 +9,7 @@
         "url": "https://github.com/zigbang/zigbang-config"
     },
     "scripts": {
-        "prepublishOnly": "merge-yaml -i .circleci/jobs.yml .circleci/tslint.yml -o .circleci/config.yml"
+        "prepublishOnly": "merge-yaml -i .circleci/jobs.yml ./packages/bot/ci/*.yml -o .circleci/config.yml"
     },
     "devDependencies": {
         "lerna": "^3.10.5",

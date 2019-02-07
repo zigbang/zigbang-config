@@ -1,123 +1,6 @@
 version: 2.1
-jobs:
-  zigbang-tslint:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - test-tslint:
-          path: packages/ts-reporter
-          repo_url: 'git@bitbucket.org:zigbang/zigbang.git'
-          repo_name: zigbang
-          target_branch: release
-  zigbang-api-tslint:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - test-tslint:
-          path: packages/ts-reporter
-          repo_url: 'git@bitbucket.org:zigbang/zigbang-api.git'
-          repo_name: zigbang-api
-          target_branch: master
-  zigbang-apis-v2-tslint:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - test-tslint:
-          path: packages/ts-reporter
-          repo_url: 'git@bitbucket.org:zigbang/zigbang-apis-v2.git'
-          repo_name: zigbang-apis-v2
-          target_branch: master
-  zigbang-io-tslint:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - test-tslint:
-          path: packages/ts-reporter
-          repo_url: 'git@bitbucket.org:zigbang/zigbang-io.git'
-          repo_name: zigbang-io
-          target_branch: master
-  react-zuix-tslint:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - test-tslint:
-          path: packages/ts-reporter
-          repo_url: 'git@bitbucket.org:zigbang/react-zuix.git'
-          repo_name: react-zuix
-          target_branch: master
-  zigbang-utils-tslint:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - test-tslint:
-          path: packages/ts-reporter
-          repo_url: 'git@bitbucket.org:zigbang/zigbang-utils.git'
-          repo_name: zigbang-utils
-          target_branch: master
-  merge-summaries:
-    docker:
-      - image: zigbang/node
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .results
-      - run:
-          name: Authenticate with registry
-          command: 'echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc'
-      - run: lerna bootstrap
-      - run: ts-node packages/ts-reporter/scripts/merge-summaries.ts
-      - store_artifacts:
-          path: ./.results/result.json
-workflows:
-  version: 2.1
-  nightly:
-    jobs:
-      - zigbang-tslint
-      - zigbang-api-tslint
-      - zigbang-apis-v2-tslint
-      - zigbang-io-tslint
-      - react-zuix-tslint
-      - zigbang-utils-tslint
-      - merge-summaries:
-          requires:
-            - zigbang-tslint
-            - zigbang-api-tslint
-            - zigbang-apis-v2-tslint
-            - zigbang-io-tslint
-            - react-zuix-tslint
-            - zigbang-utils-tslint
-    triggers:
-      - schedule:
-          cron: 0 0 * * *
-          filters:
-            branches:
-              only:
-                - /master/
 commands:
-  test-tslint:
-    description: Test tslint for given repo
-    parameters:
-      path:
-        type: string
-      repo_url:
-        type: string
-      repo_name:
-        type: string
-      target_branch:
-        type: string
+  common:
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -125,16 +8,188 @@ commands:
       - run:
           name: Authenticate with registry
           command: 'echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc'
-      - run: lerna bootstrap
       - run:
+          name: lerna bootstrap
+          command: lerna bootstrap
+  clone-repo:
+    parameters:
+      repo_url:
+        type: string
+      repo_name:
+        type: string
+      target_branch:
+        type: string
+    steps:
+      - run:
+          name: Clone Repository
           command: >-
-            ts-node << parameters.path >>/scripts/test-tslint.ts <<
-            parameters.repo_url >> << parameters.repo_name >> <<
-            parameters.target_branch >>
+            cd ./packages/bot &&  ./scripts/clone.ts --repo-url <<
+            parameters.repo_url >> --repo-name << parameters.repo_name >>
+            --branch << parameters.target_branch >> --dir ../..
+  lint-repo:
+    parameters:
+      repo_name:
+        type: string
+      prettier_src:
+        type: string
+      prettier_config:
+        type: string
+      project_path:
+        type: string
+      tslint_config:
+        type: string
+    steps:
+      - run:
+          name: Lint Repository
+          command: >-
+            cd ./packages/bot && ./scripts/lint.ts --repo-name <<
+            parameters.repo_name >> --prettier-src << parameters.prettier_src >>
+            --prettier-config << parameters.prettier_config >> --project-path <<
+            parameters.project_path >> --tslint-config <<
+            parameters.tslint_config >> --dir ../..
           no_output_timeout: 20m
+  tslint-reports:
+    parameters:
+      repo_name:
+        type: string
+    steps:
+      - run:
+          name: Report Tslint Reslut
+          command: >-
+            cd ./packages/bot && ./scripts/tslint.ts reports --repo-name <<
+            parameters.repo_name >> --dir ../..
       - store_artifacts:
-          path: ./.results
+          path: ./sub/.results
       - persist_to_workspace:
-          root: .results
+          root: ./sub/.results
           paths:
-            - << parameters.repo_name >>.json
+            - << parameters.repo_name >>-result.json
+  tslint-summary:
+    steps:
+      - run:
+          name: Report Tslint Reslut
+          command: cd ./packages/bot && ./scripts/tslint.ts summary --dir ../..
+      - store_artifacts:
+          path: ./sub/.results/result.json
+jobs:
+  zigbang:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - clone-repo:
+          repo_url: 'git@bitbucket.org:zigbang/zigbang.git'
+          repo_name: zigbang
+          target_branch: release
+      - tslint-reports:
+          repo_name: zigbang
+  zigbang-api:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - clone-repo:
+          repo_url: 'git@bitbucket.org:zigbang/zigbang-api.git'
+          repo_name: zigbang-api
+          target_branch: master
+      - tslint-reports:
+          repo_name: zigbang-api
+  zigbang-apis-v2:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - clone-repo:
+          repo_url: 'git@bitbucket.org:zigbang/zigbang-apis-v2.git'
+          repo_name: zigbang-apis-v2
+          target_branch: master
+      - tslint-reports:
+          repo_name: zigbang-apis-v2
+  zigbang-io:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - clone-repo:
+          repo_url: 'git@bitbucket.org:zigbang/zigbang-io.git'
+          repo_name: zigbang-io
+          target_branch: master
+      - tslint-reports:
+          repo_name: zigbang-io
+  react-zuix:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - clone-repo:
+          repo_url: 'git@bitbucket.org:zigbang/react-zuix.git'
+          repo_name: react-zuix
+          target_branch: master
+      - lint-repo:
+          repo_name: react-zuix
+          prettier_src: '"./**/*.{ts,tsx}"'
+          prettier_config: ./prettier.config.js
+          project_path: ./
+          tslint_config: ./tslint.json
+      - tslint-reports:
+          repo_name: react-zuix
+  zigbang-utils:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - clone-repo:
+          repo_url: 'git@bitbucket.org:zigbang/zigbang-utils.git'
+          repo_name: zigbang-utils
+          target_branch: master
+      - tslint-reports:
+          repo_name: zigbang-utils
+  summary:
+    docker:
+      - image: zigbang/node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - common
+      - attach_workspace:
+          at: ./sub/.results
+      - tslint-summary
+      - store_artifacts:
+          path: ./sub/.results/result.json
+workflows:
+  version: 2.1
+  nightly:
+    jobs:
+      - zigbang
+      - zigbang-api
+      - zigbang-apis-v2
+      - zigbang-io
+      - react-zuix
+      - zigbang-utils
+      - summary:
+          requires:
+            - zigbang
+            - zigbang-api
+            - zigbang-apis-v2
+            - zigbang-io
+            - react-zuix
+            - zigbang-utils
+    triggers:
+      - schedule:
+          cron: 0 0 * * *
+          filters:
+            branches:
+              only:
+                - /master/

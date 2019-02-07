@@ -10,7 +10,8 @@
         "url": "https://github.com/zigbang/zigbang-config"
     },
     "files": [
-        "test/",
+		"test/",
+		"scripts/",
         "tslint.json"
     ],
     "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@zigbang/config-bot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ci integrations for @zigbang/config",
   "author": "이제오 <xeoh@zigbang.com>",
   "license": "MIT",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@zigbang/config-tsconfig": "^1.1.4",
-    "@zigbang/config-tslint": "^1.1.4",
+    "@zigbang/config-tslint": "^1.1.5",
     "chalk": "^2.4.2",
     "commander": "^2.19.0",
     "shelljs": "^0.8.3",

@@ -5,7 +5,8 @@
   "author": "이제오 <xeoh@zigbang.com>",
   "license": "MIT",
   "files": [
-    "lib"
+    "scripts",
+    "ci"
   ],
   "homepage": "https://github.com/zigbang/zigbang-config",
   "repository": {

@@ -9,10 +9,9 @@
         "url": "https://github.com/zigbang/zigbang-config"
     },
     "scripts": {
-        "prepublishOnly": "merge-yaml -i .circleci/jobs.yml ./packages/bot/ci/*.yml -o .circleci/config.yml"
+
     },
     "devDependencies": {
-        "lerna": "^3.10.5",
-        "merge-yaml-cli": "^1.1.2"
+        "lerna": "^3.10.5"
     }
 }

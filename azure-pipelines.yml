@@ -1,0 +1,116 @@
+pr: none
+trigger: none
+
+jobs:
+- job: Lint_zigbang
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  steps:
+  - template: .azure/node.yml
+  - template: .azure/clone-repo.yml
+    parameters:
+      repo_url: git@bitbucket.org:zigbang/zigbang.git
+      repo_name: zigbang
+      target_branch: release
+  - template: .azure/tslint-reports.yml
+    parameters:
+      repo_name: zigbang
+
+- job: Lint_zigbang_api
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  steps:
+  - template: .azure/node.yml
+  - template: .azure/clone-repo.yml
+    parameters:
+      repo_url: git@bitbucket.org:zigbang/zigbang-api.git
+      repo_name: zigbang-api
+      target_branch: master
+  - template: .azure/tslint-reports.yml
+    parameters:
+      repo_name: zigbang-api
+
+- job: Lint_zigbang_apis_v2
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  steps:
+  - template: .azure/node.yml
+  - template: .azure/clone-repo.yml
+    parameters:
+      repo_url: git@bitbucket.org:zigbang/zigbang-apis-v2.git
+      repo_name: zigbang-apis-v2
+      target_branch: master
+  - template: .azure/tslint-reports.yml
+    parameters:
+      repo_name: zigbang-apis-v2
+
+- job: Lint_zigbang_io
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  steps:
+  - template: .azure/node.yml
+  - template: .azure/clone-repo.yml
+    parameters:
+      repo_url: git@bitbucket.org:zigbang/zigbang-io.git
+      repo_name: zigbang-io
+      target_branch: master
+  - template: .azure/tslint-reports.yml
+    parameters:
+      repo_name: zigbang-io
+
+- job: Lint_zuix
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  steps:
+  - template: .azure/node.yml
+  - template: .azure/clone-repo.yml
+    parameters:
+      repo_url: git@bitbucket.org:zigbang/react-zuix.git
+      repo_name: react-zuix
+      target_branch: master
+  - template: .azure/tslint-reports.yml
+    parameters:
+      repo_name: react-zuix
+
+- job: Lint_zigbang_utils
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  steps:
+  - template: .azure/node.yml
+  - template: .azure/clone-repo.yml
+    parameters:
+      repo_url: git@bitbucket.org:zigbang/zigbang-utils.git
+      repo_name: zigbang-utils
+      target_branch: master
+  - template: .azure/tslint-reports.yml
+    parameters:
+      repo_name: zigbang-utils
+
+- job: Summary
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  condition: eq(variables['Build.Reason'], 'Schedule')
+  dependsOn:
+  - Lint_zigbang
+  - Lint_zigbang_api
+  - Lint_zigbang_apis_v2
+  - Lint_zigbang_io
+  - Lint_zuix
+  - Lint_zigbang_utils
+  steps:
+    - template: .azure/node.yml
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: .results
+        downloadPath: ./sub
+    - script: cd ./packages/bot && ts-node ./scripts/tslint-summary.ts --dir ../..
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: ./sub/.results/result.json
+        artifactName: summary

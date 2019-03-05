@@ -25,7 +25,7 @@ jobs:
   - template: .azure/node.yml
   - template: .azure/clone-repo.yml
     parameters:
-      repo_url: git@bitbucket.org:zigbang/zigbang-api.git
+      repo_url: git@github.com:zigbang/zigbang-api.git
       repo_name: zigbang-api
       target_branch: master
   - template: .azure/tslint-reports.yml
@@ -40,7 +40,7 @@ jobs:
   - template: .azure/node.yml
   - template: .azure/clone-repo.yml
     parameters:
-      repo_url: git@bitbucket.org:zigbang/zigbang-apis-v2.git
+      repo_url: git@github.com:zigbang/zigbang-apis-v2.git
       repo_name: zigbang-apis-v2
       target_branch: master
   - template: .azure/tslint-reports.yml
@@ -55,7 +55,7 @@ jobs:
   - template: .azure/node.yml
   - template: .azure/clone-repo.yml
     parameters:
-      repo_url: git@bitbucket.org:zigbang/zigbang-io.git
+      repo_url: git@github.com:zigbang/zigbang-io.git
       repo_name: zigbang-io
       target_branch: master
   - template: .azure/tslint-reports.yml
@@ -70,7 +70,7 @@ jobs:
   - template: .azure/node.yml
   - template: .azure/clone-repo.yml
     parameters:
-      repo_url: git@bitbucket.org:zigbang/react-zuix.git
+      repo_url: git@github.com:zigbang/zigbang-zuix.git
       repo_name: react-zuix
       target_branch: master
   - template: .azure/tslint-reports.yml
@@ -85,7 +85,7 @@ jobs:
   - template: .azure/node.yml
   - template: .azure/clone-repo.yml
     parameters:
-      repo_url: git@bitbucket.org:zigbang/zigbang-utils.git
+      repo_url: git@github.com:zigbang/zigbang-utils.git
       repo_name: zigbang-utils
       target_branch: master
   - template: .azure/tslint-reports.yml

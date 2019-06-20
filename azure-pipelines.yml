@@ -1,146 +1,27 @@
+trigger:
+- master
+
 pr: none
-trigger: none
 
 jobs:
-- job: Lint_zigbang
+- job: deploy_prod
   pool:
     vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   steps:
-  - template: .azure/node.yml
-  - task: InstallSSHKey@0
+  - task: NodeTool@0
     inputs:
-      hostName: bitbucket.org,18.205.93.2 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD6cm1PLiqYfYEmMm6FzPP1nyP17JLkIxwc42WKUki9B8KTcnFhKj17iof8E9EX+0KvTHp9IueUt2QE1BV+fBcsYb6UXK5R5vX29QAq3Z8VliW5uOW386mjP1dXidr5Icp/+z1yExbfpznuu5DwLMuT5VvYxW2RWEOPBeRhwxYVP6dJwDm2HD032Ou8tAAJ0zSvf0WGmeHy/IuFNb4XwZfvVTxVNJB6BU7BXcFbTKF4Y730culAsXUrjXocIblxVisQuq5EQyOSyf+XmYBSPRRO1qBFmIIcyKgLZ3MIudAFVFA5Aqf/r/b3VBEyxBJpTB0PKt+vOeEr8BC4gokKuFnY/Ou6Zq6U0rxklPOPyAF+1W2lAAK5wdzY+WThOY1HapeM8QABMsd7T+KV/tFJMrNaa1BtVuh2D+DF6wy7wxYE4k0Bp9DBUIQMBZiGAuoUlDE1wRlWG+hLPYARv6xh9KvkRkf1pwBwg1L4hwMs8dy4kYjfd8qhUQ93nMb9rSIUYfpGRlRiD3mQv5t9wrOsysdaVKefwBhhgXRrnWfWUgkHWB7/2BvncMQUNYmBd6PghUs0BiK4LXyQIzblV+z/ej2Mx4yv9jXLWQEIU0Yil2iraSGInrGaKzz8xalxymB82yWETtgs1FZhF6RZ+IA5OY8EzXKnMOiUBIL8DlKjF614GQ== xeoh@zigbang.com
-      sshKeySecureFile: xeoh_github_id_rsa
-  - template: .azure/clone-repo.yml
-    parameters:
-      repo_url: git@bitbucket.org:zigbang/zigbang.git
-      repo_name: zigbang
-      target_branch: release
-  - template: .azure/tslint-reports.yml
-    parameters:
-      repo_name: zigbang
+      versionSpec: '8.12'
+  - script: |
+      echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
+      yarn
+      yarn build
+      rm *.ts
+    displayName: Build
+  - script: |
+      yarn release
+      rm -rf node_modules
+      yarn --prod
+      npm publish
+    displayName: Deploy
 
-- job: Lint_zigbang_api
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
-  steps:
-  - template: .azure/node.yml
-  - task: InstallSSHKey@0
-    inputs:
-      hostName: github.com,192.30.255.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD6cm1PLiqYfYEmMm6FzPP1nyP17JLkIxwc42WKUki9B8KTcnFhKj17iof8E9EX+0KvTHp9IueUt2QE1BV+fBcsYb6UXK5R5vX29QAq3Z8VliW5uOW386mjP1dXidr5Icp/+z1yExbfpznuu5DwLMuT5VvYxW2RWEOPBeRhwxYVP6dJwDm2HD032Ou8tAAJ0zSvf0WGmeHy/IuFNb4XwZfvVTxVNJB6BU7BXcFbTKF4Y730culAsXUrjXocIblxVisQuq5EQyOSyf+XmYBSPRRO1qBFmIIcyKgLZ3MIudAFVFA5Aqf/r/b3VBEyxBJpTB0PKt+vOeEr8BC4gokKuFnY/Ou6Zq6U0rxklPOPyAF+1W2lAAK5wdzY+WThOY1HapeM8QABMsd7T+KV/tFJMrNaa1BtVuh2D+DF6wy7wxYE4k0Bp9DBUIQMBZiGAuoUlDE1wRlWG+hLPYARv6xh9KvkRkf1pwBwg1L4hwMs8dy4kYjfd8qhUQ93nMb9rSIUYfpGRlRiD3mQv5t9wrOsysdaVKefwBhhgXRrnWfWUgkHWB7/2BvncMQUNYmBd6PghUs0BiK4LXyQIzblV+z/ej2Mx4yv9jXLWQEIU0Yil2iraSGInrGaKzz8xalxymB82yWETtgs1FZhF6RZ+IA5OY8EzXKnMOiUBIL8DlKjF614GQ== xeoh@zigbang.com
-      sshKeySecureFile: xeoh_github_id_rsa
-  - template: .azure/clone-repo.yml
-    parameters:
-      repo_url: git@github.com:zigbang/zigbang-api.git
-      repo_name: zigbang-api
-      target_branch: master
-  - template: .azure/tslint-reports.yml
-    parameters:
-      repo_name: zigbang-api
-
-- job: Lint_zigbang_apis_v2
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
-  steps:
-  - template: .azure/node.yml
-  - task: InstallSSHKey@0
-    inputs:
-      hostName: github.com,192.30.255.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD6cm1PLiqYfYEmMm6FzPP1nyP17JLkIxwc42WKUki9B8KTcnFhKj17iof8E9EX+0KvTHp9IueUt2QE1BV+fBcsYb6UXK5R5vX29QAq3Z8VliW5uOW386mjP1dXidr5Icp/+z1yExbfpznuu5DwLMuT5VvYxW2RWEOPBeRhwxYVP6dJwDm2HD032Ou8tAAJ0zSvf0WGmeHy/IuFNb4XwZfvVTxVNJB6BU7BXcFbTKF4Y730culAsXUrjXocIblxVisQuq5EQyOSyf+XmYBSPRRO1qBFmIIcyKgLZ3MIudAFVFA5Aqf/r/b3VBEyxBJpTB0PKt+vOeEr8BC4gokKuFnY/Ou6Zq6U0rxklPOPyAF+1W2lAAK5wdzY+WThOY1HapeM8QABMsd7T+KV/tFJMrNaa1BtVuh2D+DF6wy7wxYE4k0Bp9DBUIQMBZiGAuoUlDE1wRlWG+hLPYARv6xh9KvkRkf1pwBwg1L4hwMs8dy4kYjfd8qhUQ93nMb9rSIUYfpGRlRiD3mQv5t9wrOsysdaVKefwBhhgXRrnWfWUgkHWB7/2BvncMQUNYmBd6PghUs0BiK4LXyQIzblV+z/ej2Mx4yv9jXLWQEIU0Yil2iraSGInrGaKzz8xalxymB82yWETtgs1FZhF6RZ+IA5OY8EzXKnMOiUBIL8DlKjF614GQ== xeoh@zigbang.com
-      sshKeySecureFile: xeoh_github_id_rsa
-  - template: .azure/clone-repo.yml
-    parameters:
-      repo_url: git@github.com:zigbang/zigbang-apis-v2.git
-      repo_name: zigbang-apis-v2
-      target_branch: master
-  - template: .azure/tslint-reports.yml
-    parameters:
-      repo_name: zigbang-apis-v2
-
-- job: Lint_zigbang_io
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
-  steps:
-  - template: .azure/node.yml
-  - task: InstallSSHKey@0
-    inputs:
-      hostName: github.com,192.30.255.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD6cm1PLiqYfYEmMm6FzPP1nyP17JLkIxwc42WKUki9B8KTcnFhKj17iof8E9EX+0KvTHp9IueUt2QE1BV+fBcsYb6UXK5R5vX29QAq3Z8VliW5uOW386mjP1dXidr5Icp/+z1yExbfpznuu5DwLMuT5VvYxW2RWEOPBeRhwxYVP6dJwDm2HD032Ou8tAAJ0zSvf0WGmeHy/IuFNb4XwZfvVTxVNJB6BU7BXcFbTKF4Y730culAsXUrjXocIblxVisQuq5EQyOSyf+XmYBSPRRO1qBFmIIcyKgLZ3MIudAFVFA5Aqf/r/b3VBEyxBJpTB0PKt+vOeEr8BC4gokKuFnY/Ou6Zq6U0rxklPOPyAF+1W2lAAK5wdzY+WThOY1HapeM8QABMsd7T+KV/tFJMrNaa1BtVuh2D+DF6wy7wxYE4k0Bp9DBUIQMBZiGAuoUlDE1wRlWG+hLPYARv6xh9KvkRkf1pwBwg1L4hwMs8dy4kYjfd8qhUQ93nMb9rSIUYfpGRlRiD3mQv5t9wrOsysdaVKefwBhhgXRrnWfWUgkHWB7/2BvncMQUNYmBd6PghUs0BiK4LXyQIzblV+z/ej2Mx4yv9jXLWQEIU0Yil2iraSGInrGaKzz8xalxymB82yWETtgs1FZhF6RZ+IA5OY8EzXKnMOiUBIL8DlKjF614GQ== xeoh@zigbang.com
-      sshKeySecureFile: xeoh_github_id_rsa
-  - template: .azure/clone-repo.yml
-    parameters:
-      repo_url: git@github.com:zigbang/zigbang-io.git
-      repo_name: zigbang-io
-      target_branch: master
-  - template: .azure/tslint-reports.yml
-    parameters:
-      repo_name: zigbang-io
-
-- job: Lint_zuix
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
-  steps:
-  - template: .azure/node.yml
-  - task: InstallSSHKey@0
-    inputs:
-      hostName: github.com,192.30.255.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD6cm1PLiqYfYEmMm6FzPP1nyP17JLkIxwc42WKUki9B8KTcnFhKj17iof8E9EX+0KvTHp9IueUt2QE1BV+fBcsYb6UXK5R5vX29QAq3Z8VliW5uOW386mjP1dXidr5Icp/+z1yExbfpznuu5DwLMuT5VvYxW2RWEOPBeRhwxYVP6dJwDm2HD032Ou8tAAJ0zSvf0WGmeHy/IuFNb4XwZfvVTxVNJB6BU7BXcFbTKF4Y730culAsXUrjXocIblxVisQuq5EQyOSyf+XmYBSPRRO1qBFmIIcyKgLZ3MIudAFVFA5Aqf/r/b3VBEyxBJpTB0PKt+vOeEr8BC4gokKuFnY/Ou6Zq6U0rxklPOPyAF+1W2lAAK5wdzY+WThOY1HapeM8QABMsd7T+KV/tFJMrNaa1BtVuh2D+DF6wy7wxYE4k0Bp9DBUIQMBZiGAuoUlDE1wRlWG+hLPYARv6xh9KvkRkf1pwBwg1L4hwMs8dy4kYjfd8qhUQ93nMb9rSIUYfpGRlRiD3mQv5t9wrOsysdaVKefwBhhgXRrnWfWUgkHWB7/2BvncMQUNYmBd6PghUs0BiK4LXyQIzblV+z/ej2Mx4yv9jXLWQEIU0Yil2iraSGInrGaKzz8xalxymB82yWETtgs1FZhF6RZ+IA5OY8EzXKnMOiUBIL8DlKjF614GQ== xeoh@zigbang.com
-      sshKeySecureFile: xeoh_github_id_rsa
-  - template: .azure/clone-repo.yml
-    parameters:
-      repo_url: git@github.com:zigbang/zigbang-zuix.git
-      repo_name: react-zuix
-      target_branch: master
-  - template: .azure/tslint-reports.yml
-    parameters:
-      repo_name: react-zuix
-
-- job: Lint_zigbang_utils
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
-  steps:
-  - template: .azure/node.yml
-  - task: InstallSSHKey@0
-    inputs:
-      hostName: github.com,192.30.255.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-      sshPublicKey: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD6cm1PLiqYfYEmMm6FzPP1nyP17JLkIxwc42WKUki9B8KTcnFhKj17iof8E9EX+0KvTHp9IueUt2QE1BV+fBcsYb6UXK5R5vX29QAq3Z8VliW5uOW386mjP1dXidr5Icp/+z1yExbfpznuu5DwLMuT5VvYxW2RWEOPBeRhwxYVP6dJwDm2HD032Ou8tAAJ0zSvf0WGmeHy/IuFNb4XwZfvVTxVNJB6BU7BXcFbTKF4Y730culAsXUrjXocIblxVisQuq5EQyOSyf+XmYBSPRRO1qBFmIIcyKgLZ3MIudAFVFA5Aqf/r/b3VBEyxBJpTB0PKt+vOeEr8BC4gokKuFnY/Ou6Zq6U0rxklPOPyAF+1W2lAAK5wdzY+WThOY1HapeM8QABMsd7T+KV/tFJMrNaa1BtVuh2D+DF6wy7wxYE4k0Bp9DBUIQMBZiGAuoUlDE1wRlWG+hLPYARv6xh9KvkRkf1pwBwg1L4hwMs8dy4kYjfd8qhUQ93nMb9rSIUYfpGRlRiD3mQv5t9wrOsysdaVKefwBhhgXRrnWfWUgkHWB7/2BvncMQUNYmBd6PghUs0BiK4LXyQIzblV+z/ej2Mx4yv9jXLWQEIU0Yil2iraSGInrGaKzz8xalxymB82yWETtgs1FZhF6RZ+IA5OY8EzXKnMOiUBIL8DlKjF614GQ== xeoh@zigbang.com
-      sshKeySecureFile: xeoh_github_id_rsa
-  - template: .azure/clone-repo.yml
-    parameters:
-      repo_url: git@github.com:zigbang/zigbang-utils.git
-      repo_name: zigbang-utils
-      target_branch: master
-  - template: .azure/tslint-reports.yml
-    parameters:
-      repo_name: zigbang-utils
-
-- job: Summary
-  pool:
-    vmImage: 'Ubuntu-16.04'
-  condition: eq(variables['Build.Reason'], 'Schedule')
-  dependsOn:
-  - Lint_zigbang
-  - Lint_zigbang_api
-  - Lint_zigbang_apis_v2
-  - Lint_zigbang_io
-  - Lint_zuix
-  - Lint_zigbang_utils
-  steps:
-    - template: .azure/node.yml
-    - task: DownloadBuildArtifacts@0
-      inputs:
-        artifactName: .results
-        downloadPath: ./sub
-    - script: cd ./packages/bot && ts-node ./scripts/tslint-summary.ts --dir ../..
-    - task: PublishBuildArtifacts@1
-      inputs:
-        pathtoPublish: ./sub/.results/result.json
-        artifactName: summary

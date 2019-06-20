@@ -1,6 +1,6 @@
 {
     "name": "@zigbang/config",
-    "version": "1.1.6",
+    "version": "0.0.0",
     "description": "common config files for Zigbang projects",
     "author": "이제오 <xeoh@zigbang.com>",
     "license": "MIT",
@@ -10,10 +10,17 @@
         "url": "https://github.com/zigbang/zigbang-config"
     },
     "files": [],
+    "scripts": {
+        "build": "tsc",
+        "release": "release-it -n patch"
+    },
     "dependencies": {
         "@zigbang/config-bot": "^1.0.2",
         "@zigbang/config-prettier": "^1.1.5",
         "@zigbang/config-tsconfig": "^1.1.4",
         "@zigbang/config-tslint": "^1.1.5"
+    },
+    "devDependencies": {
+        "release-it": "^12.3.0"
     }
 }

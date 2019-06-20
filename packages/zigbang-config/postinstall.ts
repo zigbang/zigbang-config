@@ -18,7 +18,7 @@ const projectRootPath = `${process.cwd()}/../../..`
 const pathToTsconfig = `${projectRootPath}/tsconfig.json`
 const pathToTslint = `${projectRootPath}/tslint.json`
 
-const tsconfigExtendsValue = "./node_modules/@zigbang/config-tsconfig/node.json" // TODO: Determine what type of tsconfig.json should be used.
+const tsconfigExtendsValue = "./node_modules/@zigbang/config-tsconfig/base.json" // TODO: Determine what type of tsconfig.json should be used.
 const tslintExtendsValue = "@zigbang/config-tslint/tslint.json"
 
 const rawTsconfig = getFile(pathToTsconfig)

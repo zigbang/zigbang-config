@@ -1,43 +1,51 @@
+import detectIndent from "detect-indent"
 import * as fs from "fs" // TODO: shelljs
 
-function getJson<T>(path: string): T | undefined {
+function getFile(path: string) {
 	try {
-		// tslint:disable-next-line: no-var-requires
-		return require(path) as T
+		return fs.readFileSync(path).toString()
 	} catch {
 		return undefined
 	}
 }
 
-function writeJson(path: string, data: object) {
-	fs.writeFileSync(path, JSON.stringify(data, undefined, 4))
+function writeFile(path: string, data: string) {
+	fs.writeFileSync(path, data)
 }
 
-const pathToTsconfig = `${process.cwd()}/tsconfig.json`
-const pathToTslint = `${process.cwd()}/tslint.json`
+const projectRootPath = `${process.cwd()}/../../..`
+
+const pathToTsconfig = `${projectRootPath}/tsconfig.json`
+const pathToTslint = `${projectRootPath}/tslint.json`
 
 const tsconfigExtendsValue = "./node_modules/@zigbang/config-tsconfig/node.json" // TODO: Determine what type of tsconfig.json should be used.
 const tslintExtendsValue = "@zigbang/config-tslint/tslint.json"
 
-const tsconfig = getJson<{ extends?: string }>(pathToTsconfig)
-const tslint = getJson<{ extends?: string | string[] }>(pathToTslint)
+const rawTsconfig = getFile(pathToTsconfig)
+const rawTslint = getFile(pathToTslint)
+
+const tsconfigIndent = rawTsconfig ? detectIndent(rawTsconfig).indent : "    "
+const tslintIndent = rawTslint ? detectIndent(rawTslint).indent : "    "
+
+const tsconfig = rawTsconfig ? JSON.parse(rawTsconfig) as { extends?: string } : undefined
+const tslint = rawTslint ? JSON.parse(rawTslint) as { extends?: string | string[] } : undefined
 
 if (!tsconfig) {
-	writeJson(pathToTsconfig, { extends: tsconfigExtendsValue })
+	writeFile(pathToTsconfig, JSON.stringify({ extends: tsconfigExtendsValue }, undefined, tsconfigIndent))
 } else if (tsconfig && !tsconfig.extends) {
-	tsconfig.extends = "./node_modules/@zigbang/config-tsconfig/node.json"
-	writeJson(pathToTsconfig, tsconfig)
+	tsconfig.extends = tsconfigExtendsValue
+	writeFile(pathToTsconfig, JSON.stringify(tsconfig, undefined, tsconfigIndent))
 }
 
 if (!tslint) {
-	writeJson(pathToTslint, { extends: [tslintExtendsValue] })
+	writeFile(pathToTslint, JSON.stringify({ extends: [tslintExtendsValue] }, undefined, tslintIndent))
 } else if (tslint && !tslint.extends) {
 	tslint.extends = [tslintExtendsValue]
-	writeJson(pathToTslint, tslint)
+	writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
 } else if (tslint && tslint.extends && !Array.isArray(tslint.extends) && tslint.extends !== tslintExtendsValue) {
 	tslint.extends = [tslint.extends, tslintExtendsValue] // The last config you list in the extends array is actually the "base" config
-	writeJson(pathToTslint, tslint)
-} else if (tslint && Array.isArray(tslint.extends) && !tslint.extends.includes(tslintExtendsValue)) {
+	writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
+} else if (tslint && Array.isArray(tslint.extends) && tslint.extends.every((extend) => !extend.includes(tslintExtendsValue))) {
 	tslint.extends.push(tslintExtendsValue) // The last config you list in the extends array is actually the "base" config
-	writeJson(pathToTslint, tslint)
+	writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
 }

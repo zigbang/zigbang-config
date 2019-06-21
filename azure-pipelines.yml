@@ -16,7 +16,6 @@ jobs:
       echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
       yarn
       yarn build
-      rm *.ts
     displayName: Build
   - script: |
       yarn release

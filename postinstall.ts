@@ -22,6 +22,10 @@ function injectZigbangTsconfig(projectRootPath: string) {
 
 	if (!tsconfig) {
 		writeFile(pathToTsconfig, JSON.stringify({ extends: tsconfigExtendsValue }, undefined, tsconfigIndent))
+	} else if (tsconfig && tsconfig.extends && tsconfig.extends.includes("@zigbang/config-tsconfig/")) {
+		// @zigbang-config가 lerna 버전일 때의 참조를 새버전으로 변경
+		tsconfig.extends = tsconfigExtendsValue
+		writeFile(pathToTsconfig, JSON.stringify(tsconfig, undefined, tsconfigIndent))
 	} else if (tsconfig && !tsconfig.extends) {
 		tsconfig.extends = tsconfigExtendsValue
 		writeFile(pathToTsconfig, JSON.stringify(tsconfig, undefined, tsconfigIndent))
@@ -40,6 +44,14 @@ function injectZigbangTslint(projectRootPath: string) {
 	} else if (tslint && !tslint.extends) {
 		tslint.extends = [tslintExtendsValue]
 		writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
+	} else if (tslint && tslint.extends && !Array.isArray(tslint.extends) && tslint.extends.includes("@zigbang/config-tslint/")) {
+		// @zigbang-config가 lerna 버전일 때의 참조를 새버전으로 변경
+		tslint.extends = tslintExtendsValue
+		writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
+	} else if (tslint && Array.isArray(tslint.extends) && tslint.extends.some((extend) => extend.includes("@zigbang/config-tslint/"))) {
+		// @zigbang-config가 lerna 버전일 때의 참조를 새버전으로 변경
+		tslint.extends = tslint.extends.map((extend) => extend.includes("@zigbang/config-tslint/") ? tslintExtendsValue : extend)
+		writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
 	} else if (tslint && tslint.extends && !Array.isArray(tslint.extends) && tslint.extends !== tslintExtendsValue) {
 		tslint.extends = [tslint.extends, tslintExtendsValue] // The last config you list in the extends array is actually the "base" config
 		writeFile(pathToTslint, JSON.stringify(tslint, undefined, tslintIndent))
@@ -50,7 +62,7 @@ function injectZigbangTslint(projectRootPath: string) {
 }
 
 function injectConfigs() {
-	const PROJECT_ROOT_PATH = `${process.cwd()}/../..`
+	const PROJECT_ROOT_PATH = `${process.cwd()}/../../..`
 	if (!PROJECT_ROOT_PATH.includes("node_modules")) return // When developing zigbang-config
 	injectZigbangTsconfig(PROJECT_ROOT_PATH)
 	injectZigbangTslint(PROJECT_ROOT_PATH)

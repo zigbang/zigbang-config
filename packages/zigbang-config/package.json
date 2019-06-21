@@ -16,7 +16,6 @@
         "release": "release-it -n patch"
     },
     "dependencies": {
-        "@zigbang/config-bot": "^1.0.2",
         "@zigbang/config-prettier": "^1.1.5",
         "@zigbang/config-tsconfig": "^1.1.4",
         "@zigbang/config-tslint": "^1.1.5",

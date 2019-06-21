@@ -1,5 +1,7 @@
+// tslint:disable-next-line: no-implicit-dependencies
 import { expect } from "chai"
 import * as fs from "fs"
+// tslint:disable-next-line: no-implicit-dependencies
 import * as glob from "glob"
 import * as path from "path"
 
@@ -15,9 +17,10 @@ function getDirectories(srcpath: string) {
 
 function tslint(targetFile: string) {
 	try {
-		execSync(`node ./node_modules/.bin/tslint --project . ${targetFile}`)
+		execSync(`node ./node_modules/.bin/tslint --project . ${targetFile} -c ./test/tslint.test.json`)
   	} catch (e) {
-		throw new Error(`Message: ${e.toString()}, stdout: ${e.stdout && e.stdout.toString()}, stderr: ${e.stderr && e.stderr.toString()}`)
+		const error = e as { stdout: Buffer, stderr: Buffer }
+		throw new Error(`Message: ${error.toString()}, stdout: ${error.stdout && error.stdout.toString()}, stderr: ${error.stderr && error.stderr.toString()}`)
   	}
 }
 

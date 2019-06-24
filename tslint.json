@@ -1,7 +1,5 @@
 {
-	"extends": [
-        "./base.json"
-	],
+	"extends": "./tslint.base.json",
 	"linterOptions": {
 		"exclude": [
 			"./test/**/invalid.ts"

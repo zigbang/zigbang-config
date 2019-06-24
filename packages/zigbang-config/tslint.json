@@ -1,5 +1,0 @@
-{
-    "extends": [
-        "@zigbang/config-tslint/tslint.json"
-    ]
-}

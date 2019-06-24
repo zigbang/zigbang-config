@@ -1,8 +1,0 @@
-{
-	"extends": "./node_modules/@zigbang/config-tsconfig/base",
-	"compilerOptions": {
-		"target": "es5",
-		"module": "commonjs",
-		"lib": [ "es2015", "es2017", "dom" ]
-	}
-}

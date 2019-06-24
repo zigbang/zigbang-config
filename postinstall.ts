@@ -34,7 +34,7 @@ function injectZigbangTsconfig(projectRootPath: string) {
 
 function injectZigbangTslint(projectRootPath: string) {
 	const pathToTslint = `${projectRootPath}/tslint.json`
-	const tslintExtendsValue = "@zigbang/config/tslint.json"
+	const tslintExtendsValue = "@zigbang/config/tslint.base.json"
 	const rawTslint = getFile(pathToTslint)
 	const tslintIndent = rawTslint ? detectIndent(rawTslint).indent : "    "
 	const tslint = rawTslint ? JSON.parse(rawTslint) as { extends?: string | string[] } : undefined

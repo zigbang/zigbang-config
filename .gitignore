@@ -100,4 +100,4 @@ typings/
 .archive
 .results
 
-*.js
+test/**/*.js

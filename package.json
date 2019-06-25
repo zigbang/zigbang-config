@@ -19,7 +19,7 @@
     },
     "scripts": {
         "build": "tsc",
-        "postinstall": "tsc && node postinstall.js",
+        "postinstall": "node postinstall.js",
         "release": "release-it -n patch",
         "test": "mocha -r ts-node/register test/zigbang-config-tslint.spec.ts"
     },

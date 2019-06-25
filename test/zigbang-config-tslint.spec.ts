@@ -17,7 +17,7 @@ function getDirectories(srcpath: string) {
 
 function tslint(targetFile: string) {
 	try {
-		execSync(`node ./node_modules/.bin/tslint --project . ${targetFile} -c ./test/tslint.test.json`)
+		execSync(`node ./node_modules/.bin/tslint --project ./test/tsconfig.test.json ${targetFile} -c ./test/tslint.test.json`)
   	} catch (e) {
 		const error = e as { stdout: Buffer, stderr: Buffer }
 		throw new Error(`Message: ${error.toString()}, stdout: ${error.stdout && error.stdout.toString()}, stderr: ${error.stderr && error.stderr.toString()}`)

@@ -125,8 +125,12 @@
 		"no-unnecessary-class": false,
 		"no-unsafe-any": true,
 		"no-unsafe-finally": true,
-		"no-unused-expression": false,
-		"no-unused-variable": false,
+		"no-unused-expression": {
+			"severity": "warning"
+		},
+		"no-unused-variable": {
+			"severity": "warning"
+		},
 		"no-use-before-declare": true,
 		"no-var-keyword": true,
 		"no-void-expression": false,

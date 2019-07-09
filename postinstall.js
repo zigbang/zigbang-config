@@ -76,6 +76,8 @@ function injectZigbangTslint(projectRootPath) {
     }
 }
 function injectConfigs() {
+    if ((process.env.IGNORE_ZIGBANG_CONFIG_POSTINSTALL || "").toLowerCase() === "true")
+        return;
     var PROJECT_ROOT_PATH = process.cwd() + "/../../..";
     if (!PROJECT_ROOT_PATH.includes("node_modules"))
         return; // When developing zigbang-config

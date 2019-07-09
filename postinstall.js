@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var JSONC = __importStar(require("comment-json"));
 var detect_indent_1 = __importDefault(require("detect-indent"));
 var fs = __importStar(require("fs")); // TODO: shelljs
+var CI_ENV_VARS = ["BUILD_BUILDID", "APPCENTER_BUILD_ID", "CODEBUILD_BUILD_ID"];
 function getFile(path) {
     try {
         return fs.readFileSync(path).toString();
@@ -76,10 +77,20 @@ function injectZigbangTslint(projectRootPath) {
     }
 }
 function injectConfigs() {
+    if (isRunningOnCi())
+        return;
     var PROJECT_ROOT_PATH = process.cwd() + "/../../..";
     if (!PROJECT_ROOT_PATH.includes("node_modules"))
         return; // When developing zigbang-config
     injectZigbangTsconfig(PROJECT_ROOT_PATH);
     injectZigbangTslint(PROJECT_ROOT_PATH);
+}
+function isRunningOnCi() {
+    for (var _i = 0, CI_ENV_VARS_1 = CI_ENV_VARS; _i < CI_ENV_VARS_1.length; _i++) {
+        var envVar = CI_ENV_VARS_1[_i];
+        if (process.env[envVar] !== undefined)
+            return true;
+    }
+    return false;
 }
 injectConfigs();

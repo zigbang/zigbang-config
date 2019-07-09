@@ -2,6 +2,8 @@ import * as JSONC from "comment-json"
 import detectIndent from "detect-indent"
 import * as fs from "fs" // TODO: shelljs
 
+const CI_ENV_VARS = ["BUILD_BUILDID", "APPCENTER_BUILD_ID", "CODEBUILD_BUILD_ID"]
+
 function getFile(path: string) {
 	try {
 		return fs.readFileSync(path).toString()
@@ -63,11 +65,19 @@ function injectZigbangTslint(projectRootPath: string) {
 }
 
 function injectConfigs() {
-	if ((process.env.IGNORE_ZIGBANG_CONFIG_POSTINSTALL || "").toLowerCase() === "true") return
+	if (isRunningOnCi()) return
 	const PROJECT_ROOT_PATH = `${process.cwd()}/../../..`
 	if (!PROJECT_ROOT_PATH.includes("node_modules")) return // When developing zigbang-config
 	injectZigbangTsconfig(PROJECT_ROOT_PATH)
 	injectZigbangTslint(PROJECT_ROOT_PATH)
+}
+
+function isRunningOnCi() {
+	for (const envVar of CI_ENV_VARS) {
+		if (process.env[envVar] !== undefined) return true
+	}
+
+	return false
 }
 
 injectConfigs()

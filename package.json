@@ -20,7 +20,7 @@
     "scripts": {
         "build": "tsc",
         "postinstall": "node postinstall.js",
-        "release": "build && release-it -n patch",
+        "release": "release-it -n patch",
         "test": "mocha -r ts-node/register test/zigbang-config-tslint.spec.ts"
     },
     "dependencies": {

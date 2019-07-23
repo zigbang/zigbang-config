@@ -15,12 +15,9 @@ jobs:
   - script: |
       echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
       yarn
-      yarn build
+      npm run build
     displayName: Build
   - script: |
-      export GITHUB_TOKEN=$(GITHUB-TOKEN)
-      git config --global user.email "bot@zigbang.com"
-      git config --global user.name "zigbang_bot"
-      yarn release
+      npm run deploy
     displayName: Deploy
 

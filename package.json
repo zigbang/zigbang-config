@@ -1,6 +1,6 @@
 {
     "name": "@zigbang/config",
-    "version": "1.1.16",
+    "version": "1.1.17",
     "description": "common config files for Zigbang projects",
     "main": "index.js",
     "license": "MIT",

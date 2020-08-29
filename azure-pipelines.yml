@@ -16,15 +16,13 @@ jobs:
     inputs:
       versionSpec: '12.x'
   - script: |
-      export AWS_ACCESS_KEY_ID=$(AWS-ACCESS-KEY-ID-PROD)
-      export AWS_SECRET_ACCESS_KEY=$(AWS-SECRET-ACCESS-KEY-PROD)
-      export GITHUB_TOKEN=$(aws ssm get-parameter --name "/zigbang-cli/personal-token" --region "ap-northeast-1" | jq -r .Parameter.Value)
-      echo $GITHUB_TOKEN
-      echo HAHAHA
       npm config set "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)"
       yarn
     displayName: Build
   - script: |
+      export AWS_ACCESS_KEY_ID=$(AWS-ACCESS-KEY-ID-PROD)
+      export AWS_SECRET_ACCESS_KEY=$(AWS-SECRET-ACCESS-KEY-PROD)
+      export GITHUB_TOKEN=$(aws ssm get-parameter --name "/zigbang-cli/personal-token" --region "ap-northeast-1" | jq -r .Parameter.Value)
       echo $GITHUB_TOKEN
       echo HAHAHA
       yarn release patch --ci

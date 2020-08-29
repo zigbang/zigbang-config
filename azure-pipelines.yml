@@ -28,4 +28,5 @@ jobs:
       npm ping
       npm whoami
       yarn release patch --ci
+      npm publish
     displayName: Deploy

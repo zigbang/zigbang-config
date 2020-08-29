@@ -12,6 +12,7 @@
         "releaseName": "v${version}"
     },
     "npm": {
-        "publish": false
+        "publish": false,
+        "ignoreVersion": true
     }
 }

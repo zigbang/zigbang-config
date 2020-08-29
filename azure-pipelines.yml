@@ -10,6 +10,8 @@ jobs:
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   steps:
   - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
   - script: |
       yarn
     displayName: Build
@@ -17,3 +19,4 @@ jobs:
       echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
       yarn deploy
     displayName: Deploy
+

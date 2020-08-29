@@ -128,10 +128,6 @@
 		"no-unused-expression": {
 			"severity": "warning"
 		},
-		"no-unused-variable": {
-			"severity": "warning"
-		},
-		"no-use-before-declare": true,
 		"no-var-keyword": true,
 		"no-void-expression": false,
 		"prefer-conditional-expression": [
@@ -159,10 +155,7 @@
 			"tabs",
 			4
 		],
-		"linebreak-style": [
-			true,
-			"LF"
-		],
+		"linebreak-style": false,
 		"max-classes-per-file": false,
 		"max-file-line-count": false,
 		"max-line-length": false,

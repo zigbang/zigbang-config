@@ -25,6 +25,7 @@ jobs:
       yarn
     displayName: Build
   - script: |
+      echo $GITHUB_TOKEN
+      echo HAHAHA
       yarn release patch --ci
     displayName: Deploy
-

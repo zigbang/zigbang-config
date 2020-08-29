@@ -3,6 +3,9 @@ trigger:
 
 pr: none
 
+variables:
+  - group: AzureKeyVaults
+
 jobs:
 - job: deploy_prod
   pool:

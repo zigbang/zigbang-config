@@ -19,7 +19,6 @@ jobs:
       echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
       git config --global user.email "bot@zigbang.com"
       git config --global user.name "Zigbang BOT"
-      npm version patch && git push
-      yarn deploy
+      yarn release patch
     displayName: Deploy
 

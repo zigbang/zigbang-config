@@ -1,27 +1,16 @@
 {
     "name": "@zigbang/config",
     "version": "1.1.17",
-    "description": "common config files for Zigbang projects",
-    "main": "index.js",
-    "license": "MIT",
-    "homepage": "https://github.com/zigbang/zigbang-config",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/zigbang/zigbang-config"
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "release": "release-it"
     },
     "files": [
         "tsconfig.base.json",
         "tslint.base.json",
         "postinstall.js"
     ],
-    "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
-    },
-    "scripts": {
-        "build": "tsc",
-        "version": "yarn build",
-        "deploy": "npm publish"
-    },
     "dependencies": {
         "comment-json": "^3.0.3",
         "detect-indent": "^6.0.0",
@@ -40,6 +29,7 @@
         "gulp-cli": "^2.2.0",
         "mocha": "^5.2.0",
         "mocha-env-reporter": "^3.0.0",
+        "release-it": "^13.7.0",
         "ts-node": "^9.0.0",
         "typescript": "^4.0.2",
         "write-json-file": "^4.1.1"

@@ -17,6 +17,7 @@ jobs:
     displayName: Build
   - script: |
       echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
+      npm version patch
       yarn deploy
     displayName: Deploy
 

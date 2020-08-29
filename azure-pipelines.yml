@@ -13,11 +13,9 @@ jobs:
     inputs:
       versionSpec: '8.12'
   - script: |
-      echo "//registry.npmjs.org/:_authToken=$(NPM-TOKEN)" > ~/.npmrc
       yarn
-      npm run build
     displayName: Build
   - script: |
-      npm run deploy
+      yarn deploy
     displayName: Deploy
 

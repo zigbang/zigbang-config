@@ -19,9 +19,8 @@
     },
     "scripts": {
         "build": "tsc && gulp set-new-npm-version",
-        "postinstall": "node postinstall.js",
-        "deploy": "npm publish",
-        "test": "mocha -r ts-node/register test/zigbang-config-tslint.spec.ts"
+        "version": "yarn build",
+        "deploy": "npm publish"
     },
     "dependencies": {
         "comment-json": "^3.0.3",

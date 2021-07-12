@@ -9,7 +9,7 @@ variables:
 jobs:
 - job: deploy_prod
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'Ubuntu-20.04'
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   steps:
   - task: NodeTool@0
